@@ -65,8 +65,9 @@ public class HttpRequest {
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
         HttpResponse response = new HttpResponse();
         String line = bufferedReader.readLine();
-        response.setResponseCode(Integer.parseInt(line.split(" ")[1]));
-        response.setResponseMessage(line.split(" ")[2]);
+        String[] tokens = line.split(" ");
+        response.setResponseCode(Integer.parseInt(tokens[1]));
+        response.setResponseMessage(line.substring(tokens[0].length() + tokens[1].length() + 2));
         while(!bufferedReader.readLine().isEmpty());
         response.setResponseBody(bufferedReader.readLine());
         client.close();
