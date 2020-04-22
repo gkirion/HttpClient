@@ -15,10 +15,19 @@ public class HttpBuilder {
         String[] tokens = url.split("https{0,1}:/*");
         url = tokens[tokens.length - 1];
         int index = url.indexOf("/");
-        String hostUrl = url.substring(0, index);
-        String resourceUrl = url.substring(index);
+        String hostUrl;
+        String resourceUrl;
+        if (index == -1) {
+            hostUrl = url;
+            resourceUrl = "";
+        } else {
+            hostUrl = url.substring(0, index);
+            resourceUrl = url.substring(index);
+        }
         tokens = hostUrl.split(":");
-        return get(tokens[0], Integer.parseInt(tokens[1]), resourceUrl);
+        String ip = tokens[0];
+        int port = tokens.length == 2 ? Integer.parseInt(tokens[1]) : 80;
+        return get(ip, port, resourceUrl);
     }
 
     public static HttpBuilder get(String host, int port, String url) {
