@@ -49,29 +49,29 @@ public class HttpRequest {
     }
 
     public HttpResponse get() throws IOException {
-        Socket client = new Socket();
-        client.connect(new InetSocketAddress(host, port));
-        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(client.getOutputStream());
-        BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter);
-        bufferedWriter.write("GET /" + url + " HTTP/1.1\n");
-        for (String header : headers.keySet()) {
-            bufferedWriter.write(header + ": " + headers.get(header) + "\n");
-        }
-        bufferedWriter.write("\n");
-        bufferedWriter.write(content);
-        bufferedWriter.flush();
+        try (Socket client = new Socket()) {
+            client.connect(new InetSocketAddress(host, port));
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(client.getOutputStream());
+            BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter);
+            bufferedWriter.write("GET /" + url + " HTTP/1.1\n");
+            for (String header : headers.keySet()) {
+                bufferedWriter.write(header + ": " + headers.get(header) + "\n");
+            }
+            bufferedWriter.write("\n");
+            bufferedWriter.write(content);
+            bufferedWriter.flush();
 
-        InputStreamReader inputStreamReader = new InputStreamReader(client.getInputStream());
-        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-        HttpResponse response = new HttpResponse();
-        String line = bufferedReader.readLine();
-        String[] tokens = line.split(" ");
-        response.setResponseCode(Integer.parseInt(tokens[1]));
-        response.setResponseMessage(line.substring(tokens[0].length() + tokens[1].length() + 2));
-        while(!bufferedReader.readLine().isEmpty());
-        response.setResponseBody(bufferedReader.readLine());
-        client.close();
-        return response;
+            InputStreamReader inputStreamReader = new InputStreamReader(client.getInputStream());
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            HttpResponse response = new HttpResponse();
+            String line = bufferedReader.readLine();
+            String[] tokens = line.split(" ");
+            response.setResponseCode(Integer.parseInt(tokens[1]));
+            response.setResponseMessage(line.substring(tokens[0].length() + tokens[1].length() + 2));
+            while(!bufferedReader.readLine().isEmpty());
+            response.setResponseBody(bufferedReader.readLine());
+            return response;
+        }
     }
 
 }
