@@ -26,8 +26,20 @@ public class HttpBuilder {
         }
         tokens = hostUrl.split(":");
         String ip = tokens[0];
-        int port = tokens.length == 2 ? Integer.parseInt(tokens[1]) : 80;
-        return get(ip, port, resourceUrl);
+        if (tokens.length == 2) {
+            int port = Integer.parseInt(tokens[1]);
+            return get(ip, port, resourceUrl);
+        }
+        else {
+            return get(ip, resourceUrl);
+        }
+    }
+
+    public static HttpBuilder get(String host, String url) {
+        HttpBuilder builder = new HttpBuilder();
+        builder.request = new HttpRequest(host);
+        builder.request.setUrl(url);
+        return builder;
     }
 
     public static HttpBuilder get(String host, int port, String url) {
